@@ -10,6 +10,35 @@ document.body.appendChild(app.view);
 let background: Sprite = Sprite.fromImage("./desert.jpg");
 app.stage.addChild(background);
 
+   class Bullet1 {
+        sprite: Sprite;
+        direction: number = 1;
+        constructor() {
+            this.sprite = Sprite.fromImage("./bullet.png");
+            this.sprite.y = shooter1.y;
+            this.sprite.x = shooter1.x;
+            this.sprite.scale.x = .12;
+            this.sprite.scale.y = .12;
+            app.stage.addChild(this.sprite);
+            console.log("Added to stage");
+        }
+    }
+    class Bullet2 {
+        sprite: Sprite;
+        direction: number = -1; // made negative
+        constructor() {
+            this.sprite = Sprite.fromImage("./bullet.png");
+            this.sprite.y = shooter2.y;
+            this.sprite.x = shooter2.x;
+            this.sprite.scale.x = .12;
+            this.sprite.scale.y = .12;
+            this.sprite.rotation = 3.14;
+            app.stage.addChild(this.sprite);
+            console.log("Added to stage");
+        }
+    }
+
+
 let shooter1: Sprite = Sprite.fromImage("katniss-edit.jpg");
 shooter1.scale.x = .3;
 shooter1.scale.y = .3;
@@ -41,7 +70,9 @@ window.addEventListener("keydown", (e: KeyboardEvent): void => {
     const DOWN2: number = 40;
     const STEP: number = 5;
     if (e.keyCode === SHOOT1) {
-        // ADD NEW BULLET 
+        S = true;
+        let B: Bullet1 = new Bullet1();
+        append(bullets1, B);
     }
     if (e.keyCode === UP1) {
         U = true;
@@ -53,7 +84,8 @@ window.addEventListener("keydown", (e: KeyboardEvent): void => {
     if (e.keyCode === SHOOT2) {
         console.log("Shot");
         S2 = true;
-        let B: Bullet2 = new Bullet2();
+        let B2: Bullet2 = new Bullet2();
+        append(bullets2, B2);
     }
     if (e.keyCode === UP2) {
         U2 = true;
@@ -92,6 +124,14 @@ window.addEventListener("keyup", (e: KeyboardEvent): void => {
 },                      false);
 
 
+let append = <T>(a: T[], item: T): void => {
+        a[a.length] = item;
+    };
+
+let bullets1: Bullet1[] = [];
+
+let bullets2: Bullet2[] = [];
+
 app.ticker.add((delta: number): void => {
     let STEP = 5;
     if (U) {
@@ -106,20 +146,17 @@ app.ticker.add((delta: number): void => {
     if (D2) {
         shooter2.y += STEP;
     }
-});
-
-class Bullet2 {
-    sprite: Sprite;
-    direction: number = 1;
-    constructor() {
-        this.sprite = Sprite.fromImage("./bullet.png");
-        this.sprite.y = shooter2.y;
-        this.sprite.x = shooter2.x;
-        this.sprite.scale.x = .12;
-        this.sprite.scale.y = .12;
-        this.sprite.rotation = 3.14;
-        app.stage.addChild(this.sprite);
-        console.log("Added to stage");
+    if (bullets1.length !== 0) {
+            for (let i: number = 0; i < bullets1.length; i++) {
+                let bb1: Bullet1 = bullets1[i];
+                bb1.sprite.x += 5 * bb1.direction;
+            }
+    }        
+    if (bullets2.length !== 0) {
+            for (let i: number = 0; i < bullets2.length; i++) {
+                let bb2: Bullet2 = bullets2[i];
+                bb2.sprite.x += 5 * bb2.direction;
+            }
     }
-}
+});
 
