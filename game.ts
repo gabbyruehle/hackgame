@@ -4,6 +4,12 @@ import {
   Application
 } from "pixi.js";
 
+const app: Application = new Application(600, 450);
+document.body.appendChild(app.view);
+
+let background: Sprite = Sprite.fromImage("./desert.jpg");
+app.stage.addChild(background);
+
 let shooter1: Sprite = Sprite.fromImage("katniss-edit.jpg");
 shooter1.scale.x = .3;
 shooter1.scale.y = .3;
