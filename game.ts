@@ -24,4 +24,26 @@ shooter2.x = 500;
 shooter2.y = 240;
 app.stage.addChild(shooter2);
 
-
+window.addEventListener("keydown", (e: KeyboardEvent): void => {
+    console.log("key: " + e.keyCode);
+    const SHOOT1: number = 68;
+    const UP1: number = 87;
+    const DOWN1: number = 83;
+    const SHOOT2: number = 37;
+    const UP2: number = 38;
+    const DOWN2: number = 40;
+    const STEP: number = 5;
+    if (e.keyCode === SHOOT1) {
+        // ADD NEW BULLET SHOOTER1
+    } else if (e.keyCode === UP1) {
+        shooter1.y -= STEP;
+    } else if (e.keyCode === DOWN1) {
+        shooter1.y += STEP;
+    } else if (e.keyCode === SHOOT2) {
+        // ADD NEW BULLET (DIRECTION LEFT)
+    } else if (e.keyCode === UP2) {
+        shooter2.y -= STEP;
+    } else if (e.keyCode === DOWN2) {
+        shooter2.y += STEP;
+    }
+},                      false);
