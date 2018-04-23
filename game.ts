@@ -48,30 +48,16 @@ export let main = async () => {
     shooter1.scale.x = .3;
     shooter1.scale.y = .3;
     shooter1.x = 40;
-    shooter1.y = 240;
+    shooter1.y = 240 + 100;
     app.stage.addChild(shooter1);
-
+// 240 center ish
     let shooter2: Sprite = Sprite.fromImage("./tonsofthings.jpg");
     shooter2.scale.x = .5;
     shooter2.scale.y = .5;
     shooter2.x = 500;
-    shooter2.y = 240;
+    shooter2.y = 240 - 200;
     app.stage.addChild(shooter2);
 
-    /* let bullet1: Sprite = Sprite.fromImage("./bullet.png");
-    bullet1.scale.x = .12;
-    bullet1.scale.y = .12;
-    bullet1.y = shooter2.y;
-    bullet1.x = 300;
-    app.stage.addChild(bullet1);
-    
-    let bullet2: Sprite = Sprite.fromImage("./bullet.png");
-    bullet2.scale.x = .12;
-    bullet2.scale.y = .12;
-    bullet2.y = shooter2.y;
-    bullet2.x = 300;
-    bullet2.rotation = 3.14;
-    app.stage.addChild(bullet2); */
 
     let D: boolean = false;
     let U: boolean = false;
@@ -161,6 +147,7 @@ export let main = async () => {
         for (let i: number = 0; i < b.length; i++) {
             let bb = b[i].sprite;
             if (isColliding(a, bb)) {
+                handleWin2();
                 return true;
             }
         }
@@ -170,12 +157,22 @@ export let main = async () => {
         for (let i: number = 0; i < b.length; i++) {
             let bb = b[i].sprite;
             if (isColliding(a, bb)) {
+                handleWin1();
                 return true;
             }
         }
         return false;
     };
-    
+
+    let isNewGame = (a: DisplayObject, b: Bullet1[]): boolean => {
+        for (let i: number = 0; i < b.length; i++) {
+            let bb = b[i].sprite;
+            if (isColliding(a, bb)) {
+                return true;
+            }
+        }
+        return false;
+    };  
 
     let hasWon: boolean = false;
     let message1: Text = new Text("Player1 Wins!");
@@ -183,16 +180,28 @@ export let main = async () => {
     let message2: Text = new Text("Player2 Wins!");
     let messageBox2: Graphics = new Graphics();
 
-    let handleWin = (): void => {
-        message1.x = 216;
-        message1.y = 236;
+    let handleWin1 = (): void => {
+        message1.x = 35;
+        message1.y = 90;
         message1.style.fill = 0xffffff;
         messageBox1.beginFill(0x4444aa, 0.4);
-        messageBox1.drawRect(0, 0, 120, 50);
-        messageBox1.x = 256 - 45;
-        messageBox1.y = 256 - 25;
+        messageBox1.drawRect(0, 0, 175, 50);
+        messageBox1.x = 30;
+        messageBox1.y = 80;
         app.stage.addChild(messageBox1);
         app.stage.addChild(message1);
+        hasWon = true;
+    };
+    let handleWin2 = (): void => {
+        message2.x = 400;
+        message2.y = 90;
+        message2.style.fill = 0xffffff;
+        messageBox2.beginFill(0x4444aa, 0.4);
+        messageBox2.drawRect(0, 0, 175, 50);
+        messageBox2.x = 400;
+        messageBox2.y = 80;
+        app.stage.addChild(messageBox2);
+        app.stage.addChild(message2);
         hasWon = true;
     };
     
@@ -201,6 +210,14 @@ export let main = async () => {
         shooter1.y = 240;
         shooter2.x = 500;
         shooter2.y = 240;
+        for (let i: number = 0; i < bullets1.length; i++) {
+            let aa = bullets1[i].sprite;
+            app.stage.removeChild(aa);
+        }
+        for (let i: number = 0; i < bullets2.length; i++) {
+            let bb = bullets2[i].sprite;
+            app.stage.removeChild(bb);
+        }
     };
 
     app.ticker.add((delta: number): void => {
@@ -235,9 +252,19 @@ export let main = async () => {
         if (isDead2(shooter2, bullets1)) {   
             resetGame();
         }
-            
+        if (isColliding(shooter1, messageBox1) && hasWon) {
+            resetGame();
+            app.stage.removeChild(message1);
+            app.stage.removeChild(messageBox1);
+            hasWon = false;
+        }
+        if (isColliding(shooter2, messageBox2) && hasWon) {
+            resetGame();
+            app.stage.removeChild(message2);
+            app.stage.removeChild(messageBox2);
+            hasWon = false;
+        }    
     });
     
 };
 main();
-
