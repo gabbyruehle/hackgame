@@ -21,8 +21,8 @@ export let main = async () => {
         direction: number = 1;
         constructor() {
             this.sprite = Sprite.fromImage("./bullet.png");
-            this.sprite.y = shooter1.y;
-            this.sprite.x = shooter1.x;
+            this.sprite.y = shooter1.y + 20;
+            this.sprite.x = shooter1.x + 60;
             this.sprite.scale.x = .08;
             this.sprite.scale.y = .08;
             app.stage.addChild(this.sprite);
@@ -34,8 +34,8 @@ export let main = async () => {
         direction: number = -1; // made negative
         constructor() {
             this.sprite = Sprite.fromImage("./bullet.png");
-            this.sprite.y = shooter2.y;
-            this.sprite.x = shooter2.x;
+            this.sprite.y = shooter2.y + 40;
+            this.sprite.x = shooter2.x + 15;
             this.sprite.scale.x = .08;
             this.sprite.scale.y = .08;
             this.sprite.rotation = 3.14;
