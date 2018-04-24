@@ -48,16 +48,34 @@ export let main = async () => {
     shooter1.scale.x = .3;
     shooter1.scale.y = .3;
     shooter1.x = 40;
-    shooter1.y = 240 + 100;
+    shooter1.y = 340;
     app.stage.addChild(shooter1);
-// 240 center ish
+
     let shooter2: Sprite = Sprite.fromImage("./tonsofthings.jpg");
     shooter2.scale.x = .5;
     shooter2.scale.y = .5;
     shooter2.x = 500;
-    shooter2.y = 240 - 200;
+    shooter2.y = 40;
     app.stage.addChild(shooter2);
 
+    /* let shield: Sprite = Sprite.fromImage(/* put sometime here *//*);
+    shield.x = 220;
+    app.stage.addChild(shield); */
+
+    /* let bullet1: Sprite = Sprite.fromImage("./bullet.png");
+    bullet1.scale.x = .12;
+    bullet1.scale.y = .12;
+    bullet1.y = shooter2.y;
+    bullet1.x = 300;
+    app.stage.addChild(bullet1);
+    
+    let bullet2: Sprite = Sprite.fromImage("./bullet.png");
+    bullet2.scale.x = .12;
+    bullet2.scale.y = .12;
+    bullet2.y = shooter2.y;
+    bullet2.x = 300;
+    bullet2.rotation = 3.14;
+    app.stage.addChild(bullet2); */
 
     let D: boolean = false;
     let U: boolean = false;
@@ -65,6 +83,7 @@ export let main = async () => {
     let U2: boolean = false;
     let D2: boolean = false;
     let S2: boolean = false;
+   
 
     window.addEventListener("keydown", (e: KeyboardEvent): void => {
         console.log("key: " + e.keyCode);
@@ -163,7 +182,6 @@ export let main = async () => {
         }
         return false;
     };
-
     let isNewGame = (a: DisplayObject, b: Bullet1[]): boolean => {
         for (let i: number = 0; i < b.length; i++) {
             let bb = b[i].sprite;
@@ -172,9 +190,11 @@ export let main = async () => {
             }
         }
         return false;
-    };  
+    };
+    
 
-    let hasWon: boolean = false;
+    let hasWon1: boolean = false;
+    let hasWon2: boolean = false;
     let message1: Text = new Text("Player1 Wins!");
     let messageBox1: Graphics = new Graphics();
     let message2: Text = new Text("Player2 Wins!");
@@ -190,26 +210,26 @@ export let main = async () => {
         messageBox1.y = 80;
         app.stage.addChild(messageBox1);
         app.stage.addChild(message1);
-        hasWon = true;
+        hasWon1 = true;
     };
     let handleWin2 = (): void => {
         message2.x = 400;
-        message2.y = 90;
+        message2.y = 390;
         message2.style.fill = 0xffffff;
         messageBox2.beginFill(0x4444aa, 0.4);
         messageBox2.drawRect(0, 0, 175, 50);
         messageBox2.x = 400;
-        messageBox2.y = 80;
+        messageBox2.y = 380;
         app.stage.addChild(messageBox2);
         app.stage.addChild(message2);
-        hasWon = true;
+        hasWon2 = true;
     };
-    
+
     let resetGame = (): void => {
         shooter1.x = 40;
-        shooter1.y = 240;
+        shooter1.y = 340;
         shooter2.x = 500;
-        shooter2.y = 240;
+        shooter2.y = 40;
         for (let i: number = 0; i < bullets1.length; i++) {
             let aa = bullets1[i].sprite;
             app.stage.removeChild(aa);
@@ -221,6 +241,7 @@ export let main = async () => {
     };
 
     app.ticker.add((delta: number): void => {
+        
         let STEP = 5;
         if (U) {
             shooter1.y -= STEP;
@@ -246,24 +267,38 @@ export let main = async () => {
                 bb2.sprite.x += 5 * bb2.direction;
             }
         }
-        if (isDead1(shooter1, bullets2)) {   
-            resetGame();
+        // add in moving shield
+        if (!hasWon1 && !hasWon2) {
+            if (isDead1(shooter1, bullets2)) {   
+                resetGame();
+            }
+            if (isDead2(shooter2, bullets1)) {   
+                resetGame();
+            } 
         }
-        if (isDead2(shooter2, bullets1)) {   
-            resetGame();
-        }
-        if (isColliding(shooter1, messageBox1) && hasWon) {
-            resetGame();
+        
+        
+        if (isColliding(shooter1, messageBox1) && hasWon1) {
+            hasWon1 = false;
+            // hasWon2 = false;
             app.stage.removeChild(message1);
             app.stage.removeChild(messageBox1);
-            hasWon = false;
-        }
-        if (isColliding(shooter2, messageBox2) && hasWon) {
             resetGame();
+            
+            
+        }
+        if (isColliding(shooter2, messageBox2) && hasWon2) {
+            hasWon2 = false;
+            // hasWon1 = false;
             app.stage.removeChild(message2);
             app.stage.removeChild(messageBox2);
-            hasWon = false;
-        }    
+            resetGame();
+            
+            
+        }
+        
+        
+       
     });
     
 };
