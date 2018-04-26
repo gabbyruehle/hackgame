@@ -19,6 +19,7 @@ export let main = async () => {
     class Bullet1 {
         sprite: Sprite;
         direction: number = 1;
+        onScreen: boolean = true;
         constructor() {
             this.sprite = Sprite.fromImage("./bullet.png");
             this.sprite.y = shooter1.y + 20;
@@ -32,6 +33,7 @@ export let main = async () => {
     class Bullet2 {
         sprite: Sprite;
         direction: number = -1; // made negative
+        onScreen: boolean = true;
         constructor() {
             this.sprite = Sprite.fromImage("./bullet.png");
             this.sprite.y = shooter2.y + 40;
@@ -57,25 +59,28 @@ export let main = async () => {
     shooter2.x = 500;
     shooter2.y = 40;
     app.stage.addChild(shooter2);
-
-    /* let shield: Sprite = Sprite.fromImage(/* put sometime here *//*);
-    shield.x = 220;
-    app.stage.addChild(shield); */
-
-    /* let bullet1: Sprite = Sprite.fromImage("./bullet.png");
-    bullet1.scale.x = .12;
-    bullet1.scale.y = .12;
-    bullet1.y = shooter2.y;
-    bullet1.x = 300;
-    app.stage.addChild(bullet1);
     
-    let bullet2: Sprite = Sprite.fromImage("./bullet.png");
-    bullet2.scale.x = .12;
-    bullet2.scale.y = .12;
-    bullet2.y = shooter2.y;
-    bullet2.x = 300;
-    bullet2.rotation = 3.14;
-    app.stage.addChild(bullet2); */
+    class Catcus {
+        sprite: Sprite;
+        direction: number = 1;
+        constructor(sprite: Sprite) {
+            this.sprite = sprite;
+        }
+    }
+
+    let catci: Catcus[] = [];
+    for (let i: number = 1; i < 4; i++) {
+        let sprite: Sprite = Sprite.fromImage("./catcus-icon.png");
+        sprite.x = 120 * i + 35;
+        sprite.y = 256;
+        sprite.scale.x = .17;
+        sprite.scale.y = .17;
+        let catcus: Catcus = new Catcus(sprite);
+        catci.push(catcus);
+        app.stage.addChild(catcus.sprite);
+    }
+
+
 
     let D: boolean = false;
     let U: boolean = false;
@@ -164,24 +169,32 @@ export let main = async () => {
 
     let isDead1 = (a: DisplayObject, b: Bullet2[]): boolean => {
         for (let i: number = 0; i < b.length; i++) {
-            let bb = b[i].sprite;
-            if (isColliding(a, bb)) {
-                handleWin2();
-                return true;
+            if (b[i].onScreen) {
+                let bb = b[i].sprite;
+                if (isColliding(a, bb)) {
+                    handleWin2();
+                    bb.x = shooter1.x;
+                    return true;
+                }
             }
         }
         return false;
     };
     let isDead2 = (a: DisplayObject, b: Bullet1[]): boolean => {
         for (let i: number = 0; i < b.length; i++) {
-            let bb = b[i].sprite;
-            if (isColliding(a, bb)) {
-                handleWin1();
-                return true;
+            if (b[i].onScreen) {
+                let bb = b[i].sprite;
+                if (isColliding(a, bb)) {
+                    bb.x = shooter2.x;
+                    handleWin1();
+                    return true;
+                }
             }
         }
         return false;
     };
+    
+    
     let isNewGame = (a: DisplayObject, b: Bullet1[]): boolean => {
         for (let i: number = 0; i < b.length; i++) {
             let bb = b[i].sprite;
@@ -297,7 +310,34 @@ export let main = async () => {
             
         }
         
-        
+        for (let i = 0; i < bullets1.length; i++) {
+            if (isColliding(bullets1[i].sprite, catci[0].sprite)) {
+                app.stage.removeChild(bullets1[i].sprite);
+                bullets1[i].onScreen = false;
+            }
+            if (isColliding(bullets1[i].sprite, catci[1].sprite)) {
+                app.stage.removeChild(bullets1[i].sprite);
+                bullets1[i].onScreen = false;
+            }
+            if (isColliding(bullets1[i].sprite, catci[2].sprite)) {
+                app.stage.removeChild(bullets1[i].sprite);
+                bullets1[i].onScreen = false;
+            }            
+        }
+        for (let i = 0; i < bullets2.length; i++) {
+            if (isColliding(bullets2[i].sprite, catci[0].sprite)) {
+                app.stage.removeChild(bullets2[i].sprite);
+                bullets2[i].onScreen = false;
+            }
+            if (isColliding(bullets2[i].sprite, catci[1].sprite)) {
+                app.stage.removeChild(bullets2[i].sprite);
+                bullets2[i].onScreen = false;
+            }
+            if (isColliding(bullets2[i].sprite, catci[2].sprite)) {
+                app.stage.removeChild(bullets2[i].sprite);
+                bullets2[i].onScreen = false;
+            }            
+        }
        
     });
     
