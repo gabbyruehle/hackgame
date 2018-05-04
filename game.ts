@@ -59,7 +59,7 @@ export let main = async () => {
     shooter2.x = 500;
     shooter2.y = 40;
     app.stage.addChild(shooter2);
-    
+
     class Catcus {
         sprite: Sprite;
         direction: number = 1;
@@ -80,15 +80,13 @@ export let main = async () => {
         app.stage.addChild(catcus.sprite);
     }
 
-
-
     let D: boolean = false;
     let U: boolean = false;
     let S: boolean = false;
     let U2: boolean = false;
     let D2: boolean = false;
     let S2: boolean = false;
-   
+
 
     window.addEventListener("keydown", (e: KeyboardEvent): void => {
         console.log("key: " + e.keyCode);
@@ -105,11 +103,20 @@ export let main = async () => {
             append(bullets1, B);
         }
         if (e.keyCode === UP1) {
-            U = true;
-            shooter1.y -= STEP;
+            if (hasWon2) {
+                U = false;
+            } else {
+                U = true;
+                shooter1.y -= STEP;
+            }
+
         } else if (e.keyCode === DOWN1) {
-            D = true;
-            shooter1.y += STEP;
+            if (hasWon2) {
+                D = false;
+            } else {
+                D = true;
+                shooter1.y += STEP;
+            }
         }
         if (e.keyCode === SHOOT2) {
             console.log("Shot");
@@ -193,8 +200,6 @@ export let main = async () => {
         }
         return false;
     };
-    
-    
     let isNewGame = (a: DisplayObject, b: Bullet1[]): boolean => {
         for (let i: number = 0; i < b.length; i++) {
             let bb = b[i].sprite;
@@ -204,7 +209,7 @@ export let main = async () => {
         }
         return false;
     };
-    
+
 
     let hasWon1: boolean = false;
     let hasWon2: boolean = false;
@@ -212,6 +217,7 @@ export let main = async () => {
     let messageBox1: Graphics = new Graphics();
     let message2: Text = new Text("Player2 Wins!");
     let messageBox2: Graphics = new Graphics();
+    
 
     let handleWin1 = (): void => {
         message1.x = 35;
@@ -224,6 +230,8 @@ export let main = async () => {
         app.stage.addChild(messageBox1);
         app.stage.addChild(message1);
         hasWon1 = true;
+        U2 = false;
+        D2 = false;
     };
     let handleWin2 = (): void => {
         message2.x = 400;
@@ -236,6 +244,8 @@ export let main = async () => {
         app.stage.addChild(messageBox2);
         app.stage.addChild(message2);
         hasWon2 = true;
+        U = false;
+        D = false;
     };
 
     let resetGame = (): void => {
@@ -254,7 +264,20 @@ export let main = async () => {
     };
 
     app.ticker.add((delta: number): void => {
-        
+        for (let i = 0; i < catci.length; i++) {
+            let c: Catcus = catci[i];
+            c.sprite.y += 5 * c.direction;
+            if (Math.random() < 0.01) {
+                c.direction *= -1;
+            }
+            if (c.sprite.y <= 0) {
+                c.direction = 1;
+                c.sprite.y = 1;
+            } else if (c.sprite.y >= 400) {
+                c.direction = -1;
+                c.sprite.y = 399;
+            }
+        }
         let STEP = 5;
         if (U) {
             shooter1.y -= STEP;
@@ -273,43 +296,45 @@ export let main = async () => {
                 let bb1: Bullet1 = bullets1[i];
                 bb1.sprite.x += 5 * bb1.direction;
             }
-        }        
+        }
         if (bullets2.length !== 0) {
             for (let i: number = 0; i < bullets2.length; i++) {
                 let bb2: Bullet2 = bullets2[i];
                 bb2.sprite.x += 5 * bb2.direction;
             }
         }
-        // add in moving shield
-        if (!hasWon1 && !hasWon2) {
-            if (isDead1(shooter1, bullets2)) {   
-                resetGame();
+        
+        if (!hasWon1 && !hasWon2 && (shooter1.y < 450 && shooter1.y > 0) && (shooter2.y < 450 && shooter1.y > 0)) {
+            if (isDead1(shooter1, bullets2)) {
+                shooter2.x = 500;
+                shooter2.y = 40;
             }
-            if (isDead2(shooter2, bullets1)) {   
-                resetGame();
-            } 
+            if (isDead2(shooter2, bullets1)) {
+                shooter1.x = 40;
+                shooter1.y = 340;
+            }
         }
-        
-        
-        if (isColliding(shooter1, messageBox1) && hasWon1) {
+
+
+        if (isColliding(shooter1, messageBox1) && hasWon1 && (shooter1.y < 450 && shooter1.y > 0) && (shooter2.y < 450 && shooter1.y > 0)) {
             hasWon1 = false;
             // hasWon2 = false;
             app.stage.removeChild(message1);
             app.stage.removeChild(messageBox1);
             resetGame();
-            
-            
+
+
         }
-        if (isColliding(shooter2, messageBox2) && hasWon2) {
+        if (isColliding(shooter2, messageBox2) && hasWon2 && (shooter1.y < 450 && shooter1.y > 0) && (shooter2.y < 450 && shooter1.y > 0)) {
             hasWon2 = false;
             // hasWon1 = false;
             app.stage.removeChild(message2);
             app.stage.removeChild(messageBox2);
             resetGame();
-            
-            
+
+
         }
-        
+
         for (let i = 0; i < bullets1.length; i++) {
             if (isColliding(bullets1[i].sprite, catci[0].sprite)) {
                 app.stage.removeChild(bullets1[i].sprite);
@@ -338,8 +363,9 @@ export let main = async () => {
                 bullets2[i].onScreen = false;
             }            
         }
-       
+
+
     });
-    
+
 };
 main();
